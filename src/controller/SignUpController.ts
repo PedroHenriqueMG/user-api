@@ -29,11 +29,7 @@ export class SignUpController {
       },
     });
 
-    const userResponse = {
-      id: newUser.id,
-      email: newUser.email,
-      name: newUser.name,
-    };
+    const { password: _, ...userResponse } = newUser;
 
     return res.status(200).json(userResponse);
   }
