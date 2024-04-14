@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { UserController } from "./controller/UserController";
+import { SignUpController } from "./controller/SignUpController";
 
 const router = Router();
 
@@ -7,6 +7,6 @@ router.get("/", (_, res) => {
   return res.send("API online");
 });
 
-router.post("/signup", new UserController().create);
+router.post("/signup", new SignUpController().create);
 
 export default router;
