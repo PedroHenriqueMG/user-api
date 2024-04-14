@@ -1,8 +1,12 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { BadRequestError } from "../helpers/api-erros";
+import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+
+interface JwtPayLoad {
+  id: string;
+}
 
 const prisma = new PrismaClient();
 
@@ -36,5 +40,31 @@ export class LoginController {
       user: userLogin,
       token: token,
     });
+  }
+
+  async getProfile(req: Request, res: Response) {
+    const { authorization } = req.headers;
+
+    if (!authorization) {
+      throw new UnauthorizedError("Faça login para ter acesso a essa rota");
+    }
+
+    const token = authorization.split(" ")[1];
+
+    const { id } = jwt.verify(token, process.env.JWT_PASS ?? " ") as JwtPayLoad;
+
+    const user = await prisma.users.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedError("Faça login para ter acesso a essa rota");
+    }
+
+    const { password: _, ...loggedUser } = user;
+
+    return res.json(loggedUser);
   }
 }

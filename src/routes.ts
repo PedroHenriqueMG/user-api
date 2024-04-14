@@ -4,10 +4,7 @@ import { LoginController } from "./controller/LoginController";
 
 const router = Router();
 
-router.get("/", (_, res) => {
-  return res.send("API online");
-});
-
+router.get("/", new LoginController().getProfile);
 router.post("/signup", new SignUpController().create);
 router.post("/login", new LoginController().auth);
 
