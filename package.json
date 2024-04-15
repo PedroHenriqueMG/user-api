@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prisma:generate": "npx prisma generate",
     "start": "nodemon --exec ts-node ./src/server.ts"
   },
   "keywords": [],
