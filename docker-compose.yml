@@ -13,6 +13,12 @@ services:
       - ./data:/var/lib/postgresql/data
     networks:
       - my-app
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 2s
 
   api:
     container_name: login_api
@@ -22,9 +28,10 @@ services:
       - "8080:8080"
     networks:
       - my-app
-    restart: always
-    env_file:
-      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:123456@localhost:5432/
+      PORT: 8080
+      JWT_PASS: teste
     volumes:
       - .:/usr/src/app
     build:
