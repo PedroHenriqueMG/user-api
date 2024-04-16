@@ -18,9 +18,6 @@ prisma
   })
   .catch((error) => {
     console.error("Erro ao conectar ao banco de dados:", error);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
   });
 
 app.use(errosMiddleware);

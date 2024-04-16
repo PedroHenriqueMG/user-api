@@ -1,42 +1,37 @@
 version: "3.8"
 
 services:
-  db:
-    image: postgres:alpine
-    container_name: postgres
-    environment:
-      POSTGRES_PASSWORD: 123456
-      POSTGRES_USER: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./data:/var/lib/postgresql/data
-    networks:
-      - my-app
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 2s
-
   api:
     container_name: login_api
     depends_on:
-      - db
+      - postgres
     ports:
       - "8080:8080"
     networks:
-      - my-app
-    environment:
-      DATABASE_URL: postgresql://postgres:123456@localhost:5432/
-      PORT: 8080
-      JWT_PASS: teste
+      - my-login
     volumes:
       - .:/usr/src/app
     build:
       context: .
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/api
+
+  postgres:
+    container_name: postgres
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: api
+    volumes:
+      - ./data:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - my-login
+    restart: always
 
 networks:
-  my-app:
+  my-login:
     driver: bridge
